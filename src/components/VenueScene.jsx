@@ -45,7 +45,6 @@ function CameraJourney({
   const sun = useRef();
   const fill = useRef();
   const last = useRef(-1);
-  const smooth = useRef(progress.current);
   const aim = useRef(new THREE.Vector3(...STOPS[0].look));
   const projected = useMemo(() => new THREE.Vector3(), []);
   const data = useMemo(
@@ -54,7 +53,7 @@ function CameraJourney({
       looks: STOPS.map((s) => new THREE.Vector3(...s.look)),
       position: new THREE.Vector3(),
       look: new THREE.Vector3(),
-      color: new THREE.Color(),
+      direction: new THREE.Vector3(),
     }),
     [],
   );
@@ -76,27 +75,20 @@ function CameraJourney({
   }, [exploring, invalidate]);
 
   useEffect(() => {
-    let frame;
-    const redraw = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(invalidate);
-    };
+    // R3F already schedules the next frame; another RAF adds input latency.
+    const redraw = () => invalidate();
     window.addEventListener("scroll", redraw, { passive: true });
     window.addEventListener("resize", redraw);
     return () => {
-      cancelAnimationFrame(frame);
       window.removeEventListener("scroll", redraw);
       window.removeEventListener("resize", redraw);
     };
   }, [invalidate]);
 
-  useFrame((_, rawDelta) => {
-    const delta = Math.min(rawDelta, 0.05);
+  useFrame(() => {
     const target = THREE.MathUtils.clamp(progress.current, 0, 1);
-    smooth.current = reduced
-      ? Math.round(target * 4) / 4
-      : THREE.MathUtils.damp(smooth.current, target, 4.5, delta);
-    const p = smooth.current;
+    // Native touch momentum supplies the motion. Keep the scene attached to it.
+    const p = reduced ? Math.round(target * 4) / 4 : target;
     const scaled = p * 4;
     const index = Math.min(3, Math.floor(scaled));
     const part = THREE.MathUtils.smoothstep(scaled - index, 0, 1);
@@ -114,15 +106,14 @@ function CameraJourney({
         const from = MOBILE_FRAMING[index];
         const to = MOBILE_FRAMING[index + 1];
         data.position.addScaledVector(
-          data.position.clone().sub(data.look).normalize(),
+          data.direction.subVectors(data.position, data.look).normalize(),
           THREE.MathUtils.lerp(from.distance, to.distance, part),
         );
         data.look.y += THREE.MathUtils.lerp(from.y, to.y, part);
         data.look.x += THREE.MathUtils.lerp(from.x, to.x, part);
       }
-      const blend = reduced ? 1 : 1 - Math.exp(-delta * 8);
-      camera.position.lerp(data.position, blend);
-      aim.current.lerp(data.look, blend);
+      camera.position.copy(data.position);
+      aim.current.copy(data.look);
       camera.lookAt(aim.current);
       camera.fov =
         THREE.MathUtils.lerp(STOPS[index].fov, STOPS[index + 1].fov, part) +
@@ -154,14 +145,6 @@ function CameraJourney({
       gl.domElement.dataset.journey = p.toFixed(3);
       last.current = Math.round(p * 1000);
     }
-    if (
-      !exploring &&
-      !reduced &&
-      (Math.abs(target - p) > 0.00005 ||
-        camera.position.distanceToSquared(data.position) > 0.00001 ||
-        aim.current.distanceToSquared(data.look) > 0.00001)
-    )
-      invalidate();
   });
   return (
     <>

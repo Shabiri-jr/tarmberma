@@ -547,40 +547,41 @@ function App() {
   };
   const travel = (index) => {
     setExploring(false);
+    const direct =
+      reduced || matchMedia("(pointer: coarse), (max-width: 759px)").matches;
     window.scrollTo({
       top: (index / 4) * (journey.current.offsetHeight - window.innerHeight),
-      behavior: reduced ? "instant" : "smooth",
+      behavior: direct ? "instant" : "smooth",
     });
   };
 
   useEffect(() => {
-    let frame;
+    let scrollRange = 1;
     const update = () => {
-      const max = Math.max(
-        1,
-        journey.current.offsetHeight - window.innerHeight,
-      );
-      progress.current = Math.min(1, Math.max(0, window.scrollY / max));
+      // Update the ref in the scroll event so the next WebGL frame sees it.
+      progress.current = Math.min(1, Math.max(0, window.scrollY / scrollRange));
       setChapter(Math.round(progress.current * 4));
       if (progressBar.current)
         progressBar.current.style.transform = `scaleX(${progress.current})`;
     };
-    const scroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(update);
+    const resize = () => {
+      scrollRange = Math.max(
+        1,
+        journey.current.offsetHeight - window.innerHeight,
+      );
+      update();
     };
     const visibility = () => setHidden(document.hidden);
     const preference = matchMedia("(prefers-reduced-motion: reduce)");
     const motion = (event) => setReduced(event.matches);
-    window.addEventListener("scroll", scroll, { passive: true });
-    window.addEventListener("resize", scroll);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", visibility);
     preference.addEventListener("change", motion);
-    update();
+    resize();
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", scroll);
-      window.removeEventListener("resize", scroll);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", visibility);
       preference.removeEventListener("change", motion);
     };
