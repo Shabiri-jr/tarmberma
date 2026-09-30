@@ -36,11 +36,9 @@ Open http://127.0.0.1:5173. Production: `npm run build`, then `npm run preview`.
 | `src/data/menu.js`                    | Menu selections transcribed from supplied PDFs                                  |
 | `public/images/venue-preview.jpg`     | Still rendered from this 3D concept for loading and fallback                    |
 | `public/menus/`                       | Original PDFs, loaded only on request                                           |
-| `research/website-qa.md`              | Current verification results                                                    |
 
 ## Concept status
 
-The courtyard is an artistic interpretation, not an exact reconstruction or surveyed digital twin of Tamberma. Business research and source analysis are in `Tamberma-Research-and-3D-Website-Pitch.md` and `research/`.
+The courtyard is an artistic interpretation, not an exact reconstruction or surveyed digital twin of Tamberma. Business research and source analysis are summarized in `Tamberma-Research-and-3D-Website-Pitch.md`. Working research files and verification screenshots are kept locally and excluded from Git.
 
-This remains a local pitch with `noindex, nofollow` metadata. The restaurant should approve branding, venue representation, imagery, prices, and business details before publication. Opening hours are referred to the team because public listings conflict. See `research/asset-sources.md` for photo provenance. No public deployment, booking, order, or external message was made.
-
+This remains a local pitch with `noindex, nofollow` metadata. The restaurant should approve branding, venue representation, imagery, prices, and business details before publication. Opening hours are referred to the team because public listings conflict. Reference food photography comes from the older [Tamberma website](https://tamberma.netlify.app/); its current ownership and image rights are unconfirmed. No public deployment, booking, order, or external message was made.
