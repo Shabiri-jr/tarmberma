@@ -1,6 +1,26 @@
-# Tamberma Ibadan: research and 3D website pitch
+# Tamberma: Ibadan and Victoria Island research and 3D website pitch
 
 Research checked: **30 September 2026**. Prepared as an independent concept brief for a prospective pitch, not as an official Tamberma publication.
+
+## Branch correction and revised scope — 1 October 2026
+
+The original notes mentioned a Victoria Island location but did not investigate its current channels sufficiently or carry the multi-location structure into the website plan. That was a research and scoping omission. The user confirmed that Ibadan and Victoria Island share ownership and chose a website that lets visitors select either branch. Common ownership is user-provided context; this research does not independently verify the legal ownership structure or claim these are the group's only locations.
+
+The revised scope is a shared Tamberma website with a visible location selector and separate branch menus, prices, tax notes, PDF downloads, directions, Instagram, Glovo and enquiry destinations. A branch selection is remembered locally and can be shared using a location URL parameter. The existing 3D courtyard remains a shared artistic interpretation, not a surveyed model of either venue. The earlier sections below retain the Ibadan-specific evidence unless labelled otherwise.
+
+| Victoria Island fact | Checked source and qualification |
+|---|---|
+| Current Instagram | [@tamberma.vi](https://www.instagram.com/tamberma.vi/) identifies Tamberma Victoria Island and links to the VI Linktree. The Linktree still references an older underscore Instagram handle; the current dotted profile is used. |
+| Address | **23A Saka Tinubu Street, Victoria Island, Lagos**, stated in the [restaurant's September 16, 2026 post](https://www.instagram.com/tamberma.vi/p/DdWVlrSscgW/). Some older web pages omit the A. |
+| Reservation telephone | **0807 559 2227**, from that same current official post. |
+| WhatsApp | **0705 977 3758**, the destination linked by [VI's bio-linked Linktree](https://linktr.ee/tambermavi). This differs from the published reservation telephone; do not infer that either number serves both channels. |
+| Hours | Profile states **Mon–Thu 11am–11pm; Fri–Sun 8am–11pm**, observed October 1, 2026. Special dates may differ. |
+| Food and drink menus | Separate VI source PDFs: [food](https://ugc.production.linktr.ee/301e4709-bf55-41e3-bb32-dfcc047b4d90_tam-vi-menu--1-.pdf) (15 pages) and [drinks](https://ugc.production.linktr.ee/268e075b-91c4-4f69-86e7-881b9f00ebc2_tamberma-vi-drinksmenu.pdf) (4 pages), downloaded unchanged from its current Linktree. |
+| Menu charges | Both VI PDFs state **7.5% VAT and 5% consumption tax are extra**. This is a transcription of the menu note, not a legal tax assessment. The Ibadan menus supplied earlier list 7.5% VAT extra. |
+| Menu selections | 40 VI selections visually checked against food pages 1–5 and 13 and drinks pages 1–2. Example: Butter Chicken curry is 13,000 NGN at VI versus 12,000 NGN in the supplied Ibadan menu. Full PDFs remain available for the complete selections. |
+| Delivery | Its Linktree points to [the Lagos Glovo storefront](https://glovoapp.com/ng/en/lagos/tamberma-restaurant-bar-los/), separate from Ibadan. No order or enquiry was submitted. |
+
+The discoverable tambermaventures.com site identifies Lagos, but its current ownership and operational accuracy remain unverified; it contains template-like content and an info@mysite.com placeholder. It is not the source for this update's menu prices, booking workflow or branch contacts. Public references to other historical/group locations are research leads, not a verified current branch inventory.
 
 ## Recommendation
 

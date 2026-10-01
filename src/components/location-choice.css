@@ -1,0 +1,229 @@
+.experience .experience-header.has-location-switch {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+.experience .has-location-switch .header-actions {
+  justify-self: end;
+}
+.experience .location-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 9px 16px;
+  min-height: 48px;
+  border: 1px solid #f3e6cd45;
+  border-radius: 3px;
+  background: #233a2e70;
+  backdrop-filter: blur(12px);
+  color: #fff6e7;
+  text-align: left;
+}
+.location-switch span {
+  display: grid;
+  gap: 4px;
+}
+.location-switch small {
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  color: #e3cba4;
+}
+.location-switch strong {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.experience .location-switch:hover {
+  background: #233a2ea6;
+  border-color: #e9cf9e;
+}
+.modal.location-modal {
+  max-width: 700px;
+}
+.location-modal .modal-shell {
+  padding: 44px 48px 32px;
+}
+.location-choice > .eyebrow {
+  padding-right: 38px;
+}
+.location-choice h2 {
+  margin: 20px 0 18px;
+  font-size: clamp(52px, 6vw, 76px);
+}
+.location-choice > p {
+  max-width: 440px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #6c6c5d;
+  margin: 0 0 27px;
+}
+.location-options {
+  border-top: 1px solid #dcd9cf;
+}
+.location-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 19px;
+  padding: 22px 8px;
+  border-bottom: 1px solid #dcd9cf;
+  color: #292b23;
+  text-align: left;
+  transition: background 0.18s;
+}
+.location-option:hover,
+.location-option.is-selected {
+  background: #eae5d966;
+}
+.location-option-number {
+  align-self: flex-start;
+  margin-top: 7px;
+  font-size: 10px;
+  color: #a8492b;
+}
+.location-option-copy {
+  display: grid;
+  gap: 8px;
+  flex: 1;
+}
+.location-option-copy small {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #8a603f;
+}
+.location-option-copy strong {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 39px;
+  line-height: 1;
+}
+.location-option-copy > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.location-option-copy em {
+  font-style: normal;
+  color: #777369;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.location-option-arrow {
+  display: grid;
+  place-items: center;
+  color: #a8492b;
+  flex-shrink: 0;
+}
+.location-choice-note {
+  display: block;
+  margin-top: 22px;
+  font-size: 10px;
+  color: #777369;
+}
+.menu-branch-label,
+.reservation-location {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #a8492b;
+  margin: 14px 0;
+}
+.branch-hours {
+  font-size: 12px;
+  color: #6c6c5d;
+  line-height: 1.7;
+}
+.branch-menu-switch {
+  margin-top: 6px;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 1050px) and (min-width: 681px) {
+  .experience .experience-header.has-location-switch {
+    gap: 12px;
+    grid-template-columns: auto 1fr auto;
+  }
+  .experience .location-switch {
+    justify-self: center;
+    padding: 8px 10px;
+  }
+  .experience .has-location-switch .header-actions {
+    gap: 15px;
+  }
+}
+@media (max-width: 680px) {
+  .experience .experience-header.has-location-switch {
+    grid-template-columns: 1fr auto;
+    gap: 7px 12px;
+  }
+  .experience .has-location-switch .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .experience .location-switch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: start;
+    min-height: 34px;
+    padding: 5px 9px;
+    gap: 8px;
+  }
+  .location-switch span {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .location-switch small {
+    font-size: 6px;
+    letter-spacing: 0.1em;
+  }
+  .location-switch strong {
+    font-size: 10px;
+  }
+  .location-modal .modal-shell {
+    padding: 42px 24px 25px;
+  }
+  .location-choice h2 {
+    font-size: 58px;
+  }
+  .location-choice > p {
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+  .location-option {
+    padding: 19px 3px;
+    gap: 11px;
+  }
+  .location-option-copy strong {
+    font-size: 34px;
+  }
+  .location-option-copy > span {
+    font-size: 10px;
+  }
+  .location-option-copy em {
+    font-size: 10px;
+  }
+}
+@media (max-height: 740px) and (max-width: 680px) {
+  .location-choice h2 {
+    font-size: 46px;
+    margin: 13px 0;
+  }
+  .location-option {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .location-choice-note {
+    margin-top: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .location-option {
+    transition: none;
+  }
+}

@@ -23,17 +23,20 @@ import {
   Play,
   Sun,
   Moon,
+  ChevronDown,
+  Phone,
 } from "lucide-react";
-import { menuCategories, menuItems } from "./data/menu";
+import { menuCategories } from "./data/menu";
+import {
+  locations,
+  locationById,
+  readLocation,
+  LOCATION_STORAGE_KEY,
+} from "./data/locations";
 import SoundControl from "./components/SoundControl";
+import LocationChoice from "./components/LocationChoice";
 
 const VenueScene = lazy(() => import("./components/VenueScene"));
-const INSTAGRAM = "https://www.instagram.com/tamberma_ibadan/";
-const GLOVO =
-  "https://glovoapp.com/en/ng/ringroad-ibadan-challenge/stores/tamberma-ibadan-rch";
-const WHATSAPP = "https://wa.me/2348075590939";
-const DIRECTIONS =
-  "https://www.google.com/maps/search/?api=1&query=Tamberma+Restaurant+Bar+1+Oba+Aleshinloye+Crescent+Iyaganku+Ibadan";
 const money = (value) => `₦${value.toLocaleString("en-NG")}`;
 const localDate = () =>
   new Intl.DateTimeFormat("en-CA", {
@@ -127,19 +130,19 @@ function Modal({ title, className = "", onClose, children }) {
   );
 }
 
-function MenuModal({ onClose, initialCategory }) {
+function MenuModal({ onClose, initialCategory, location, onChangeLocation }) {
   const [category, setCategory] = useState(initialCategory || "all");
   const [search, setSearch] = useState("");
   const results = useMemo(
     () =>
-      menuItems.filter(
+      location.menuItems.filter(
         (item) =>
           (category === "all" || item.category === category) &&
           `${item.name} ${item.description}`
             .toLowerCase()
             .includes(search.trim().toLowerCase()),
       ),
-    [category, search],
+    [category, search, location],
   );
   return (
     <Modal
@@ -149,12 +152,20 @@ function MenuModal({ onClose, initialCategory }) {
     >
       <div className="menu-modal-header">
         <span className="eyebrow">SOMETHING FOR EVERY CRAVING</span>
+        <div className="menu-branch-label">
+          <MapPin size={14} />
+          Tamberma {location.name}
+        </div>
         <h2>
           Find your <em>favourite.</em>
         </h2>
         <p>
-          A selection from our food & drinks menus. Prices exclude 7.5% VAT.
+          A selection from our {location.name} food & drinks menus.{" "}
+          {location.menuNote}
         </p>
+        <button className="branch-menu-switch" onClick={onChangeLocation}>
+          Change location
+        </button>
       </div>
       <div className="menu-tools">
         <label className="search-box">
@@ -173,16 +184,22 @@ function MenuModal({ onClose, initialCategory }) {
           )}
         </label>
         <div className="category-filters" aria-label="Menu categories">
-          {menuCategories.map((cat) => (
-            <button
-              key={cat.id}
-              aria-pressed={category === cat.id}
-              className={category === cat.id ? "active" : ""}
-              onClick={() => setCategory(cat.id)}
-            >
-              {cat.label}
-            </button>
-          ))}
+          {menuCategories
+            .filter(
+              (cat) =>
+                cat.id === "all" ||
+                location.menuItems.some((item) => item.category === cat.id),
+            )
+            .map((cat) => (
+              <button
+                key={cat.id}
+                aria-pressed={category === cat.id}
+                className={category === cat.id ? "active" : ""}
+                onClick={() => setCategory(cat.id)}
+              >
+                {cat.label}
+              </button>
+            ))}
         </div>
       </div>
       <div className="menu-result-count" role="status">
@@ -242,10 +259,10 @@ function MenuModal({ onClose, initialCategory }) {
           </p>
         </div>
         <div className="download-links">
-          <a href="/menus/tamberma-food.pdf" target="_blank" rel="noreferrer">
+          <a href={location.foodPdf} target="_blank" rel="noreferrer">
             Food PDF <Download size={16} />
           </a>
-          <a href="/menus/tamberma-drinks.pdf" target="_blank" rel="noreferrer">
+          <a href={location.drinksPdf} target="_blank" rel="noreferrer">
             Drinks PDF <Download size={16} />
           </a>
         </div>
@@ -254,7 +271,7 @@ function MenuModal({ onClose, initialCategory }) {
   );
 }
 
-function ReservationModal({ onClose }) {
+function ReservationModal({ onClose, location }) {
   const [request, setRequest] = useState(null);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState({});
@@ -279,13 +296,13 @@ function ReservationModal({ onClose }) {
       year: "numeric",
       timeZone: "Africa/Lagos",
     });
-    const message = `Hello Tamberma Ibadan! I'd like to enquire about a table.\n\nName: ${fields.name.trim()}\nDate: ${formatted}\nTime: ${fields.time} (Nigeria time)\nGuests: ${fields.guests}\nOccasion: ${fields.occasion}${fields.notes.trim() ? `\nNotes: ${fields.notes.trim()}` : ""}\n\nPlease let me know if a table is available. Thank you!`;
+    const message = `Hello Tamberma ${location.name}! I'd like to enquire about a table.\n\nLocation: ${location.address}, ${location.neighborhood}, ${location.city}\nName: ${fields.name.trim()}\nDate: ${formatted}\nTime: ${fields.time} (Nigeria time)\nGuests: ${fields.guests}\nOccasion: ${fields.occasion}${fields.notes.trim() ? `\nNotes: ${fields.notes.trim()}` : ""}\n\nPlease let me know if a table is available. Thank you!`;
     setError("");
     setDraft(fields);
     setRequest({
       ...fields,
       formatted,
-      url: `${WHATSAPP}?text=${encodeURIComponent(message)}`,
+      url: `${location.whatsapp}?text=${encodeURIComponent(message)}`,
     });
   };
   return (
@@ -297,12 +314,16 @@ function ReservationModal({ onClose }) {
       {!request ? (
         <>
           <span className="eyebrow">MAKE A LITTLE TIME FOR YOURSELF</span>
+          <div className="reservation-location">
+            <MapPin size={14} />
+            Tamberma {location.name}
+          </div>
           <h2>
             Your table <em>awaits.</em>
           </h2>
           <p>
             Tell us what you have in mind. We’ll prepare your enquiry to send to
-            our team on WhatsApp.
+            our {location.name} team on WhatsApp.
           </p>
           <form onSubmit={submit} className="reservation-form">
             <label>
@@ -404,9 +425,17 @@ function ReservationModal({ onClose }) {
           </h2>
           <p>
             Your enquiry is ready. Continue to WhatsApp to review and send it to
-            Tamberma.
+            Tamberma {location.name}.
           </p>
           <dl>
+            <div>
+              <dt>Location</dt>
+              <dd>
+                {location.name}
+                <br />
+                {location.address}
+              </dd>
+            </div>
             <div>
               <dt>Name</dt>
               <dd>{request.name}</dd>
@@ -521,8 +550,13 @@ const CHAPTERS = [
 const DIRECT_SCROLL_QUERY = "(pointer: coarse)";
 
 function App() {
+  const [initialLocation] = useState(readLocation);
+  const [locationId, setLocationId] = useState(initialLocation?.id || "ibadan");
+  const [hasSelectedLocation, setHasSelectedLocation] = useState(
+    Boolean(initialLocation),
+  );
   const [chapter, setChapter] = useState(0);
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState(initialLocation ? null : "location");
   const [menuCategory, setMenuCategory] = useState("all");
   const [exploring, setExploring] = useState(false);
   const [ready, setReady] = useState(false);
@@ -538,6 +572,7 @@ function App() {
   const progressBar = useRef();
   const hotspot = useRef();
   const journey = useRef();
+  const location = locationById[locationId];
   const active = CHAPTERS[chapter];
   const onReady = useCallback(() => setReady(true), []);
   const onFail = useCallback(() => {
@@ -546,6 +581,36 @@ function App() {
     setExploring(false);
   }, []);
   const closeModal = () => setModal(null);
+  const changeLocation = () => setModal("location");
+  const selectLocation = (id) => {
+    if (!Object.hasOwn(locationById, id)) return;
+    setLocationId(id);
+    setHasSelectedLocation(true);
+    setMenuCategory("all");
+    setExploring(false);
+    setModal(null);
+    try {
+      localStorage.setItem(LOCATION_STORAGE_KEY, id);
+    } catch {
+      /* Selection works without storage. */
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set("location", id);
+    window.history.replaceState(null, "", url);
+    window.scrollTo({ top: 0, behavior: "instant" });
+    progress.current = 0;
+    setChapter(0);
+  };
+
+  useEffect(() => {
+    document.title = `Tamberma A little escape in ${location.city}`;
+    document
+      .querySelector('meta[name="description"]')
+      ?.setAttribute(
+        "content",
+        `Explore Tamberma ${location.name}: food, drinks and warm hospitality at ${location.address}, ${location.neighborhood}, ${location.city}.`,
+      );
+  }, [location]);
   const showMenu = (category = "all") => {
     setMenuCategory(category);
     setModal("menu");
@@ -660,11 +725,20 @@ function App() {
         )}
       </div>
 
-      <header className="experience-header">
+      <header className="experience-header has-location-switch">
         <Brand />
-        <span className="header-location">
-          A LITTLE ESCAPE IN IBADAN <span>RESTAURANT · BAR · GOOD COMPANY</span>
-        </span>
+        <button
+          className="location-switch"
+          onClick={changeLocation}
+          aria-label={`Change location, currently ${location.name}`}
+        >
+          <MapPin size={14} />
+          <span>
+            <small>YOUR TAMBERMA</small>
+            <strong>{location.name}</strong>
+          </span>
+          <ChevronDown size={14} />
+        </button>
         <nav className="header-actions" aria-label="Main navigation">
           <button onClick={() => showMenu()} className="menu-trigger">
             The menu <MenuIcon size={17} />
@@ -685,7 +759,7 @@ function App() {
         aria-label="Journey through Tamberma"
       >
         <h1 className="sr-only">
-          Tamberma Restaurant & Bar — A little escape in Ibadan
+          Tamberma Restaurant & Bar — A little escape in {location.city}
         </h1>
         <div
           className="chapter-copy"
@@ -696,7 +770,9 @@ function App() {
         >
           <div className="chapter-eyebrow">
             <span className="fine-line" />
-            {active.label}
+            {chapter === 0
+              ? `${location.neighborhood}, ${location.city}`
+              : active.label}
           </div>
           <h2>{active.title}</h2>
           <p>{active.text}</p>
@@ -713,7 +789,7 @@ function App() {
           </button>
           {chapter === 4 && (
             <button className="visit-inline" onClick={() => setModal("visit")}>
-              Find us in Iyaganku <MapPin size={14} />
+              Find us in {location.neighborhood} <MapPin size={14} />
             </button>
           )}
         </div>
@@ -729,7 +805,7 @@ function App() {
           </span>
         </aside>
 
-        {chapter === 2 && !exploring && (
+        {chapter === 2 && !exploring && location.id === "ibadan" && (
           <button className="dish-peek" onClick={() => showMenu("pizza")}>
             <img src="/images/food-pizza.jpg" alt="Chicken suya pizza" />
             <span>
@@ -744,7 +820,10 @@ function App() {
           <button className="visit-peek" onClick={() => setModal("visit")}>
             <MapPin size={20} />
             <span>
-              Find your way to us<small>Iyaganku GRA, Ibadan</small>
+              Find your way to us
+              <small>
+                {location.neighborhood}, {location.city}
+              </small>
             </span>
             <ArrowUpRight size={18} />
           </button>
@@ -817,10 +896,35 @@ function App() {
         </div>
       </div>
 
-      {modal === "menu" && (
-        <MenuModal onClose={closeModal} initialCategory={menuCategory} />
+      {modal === "location" && (
+        <Modal
+          title="Choose your Tamberma"
+          className="location-modal"
+          onClose={closeModal}
+        >
+          <LocationChoice
+            locations={locations}
+            selectedId={hasSelectedLocation ? locationId : null}
+            onSelect={selectLocation}
+          />
+        </Modal>
       )}
-      {modal === "reservation" && <ReservationModal onClose={closeModal} />}
+      {modal === "menu" && (
+        <MenuModal
+          key={location.id}
+          onClose={closeModal}
+          initialCategory={menuCategory}
+          location={location}
+          onChangeLocation={changeLocation}
+        />
+      )}
+      {modal === "reservation" && (
+        <ReservationModal
+          key={location.id}
+          onClose={closeModal}
+          location={location}
+        />
+      )}
       {modal === "music-credits" && (
         <Modal
           title="Music credits"
@@ -861,13 +965,14 @@ function App() {
         >
           <span className="eyebrow">YOUR LITTLE ESCAPE</span>
           <h2>
-            See you in <em>Ibadan.</em>
+            See you in <em>{location.city}.</em>
           </h2>
           <p>
-            1 Oba Aleshinloye Crescent,
+            {location.address},
             <br />
-            Iyaganku GRA, Ibadan.
+            {location.neighborhood}, {location.city}.
           </p>
+          {location.hours && <p className="branch-hours">{location.hours}</p>}
           <p>
             For today’s opening hours, entertainment, or group celebrations,
             please check with the team.
@@ -875,7 +980,7 @@ function App() {
           <div className="visit-links">
             <a
               className="button button-clay"
-              href={DIRECTIONS}
+              href={location.directions}
               target="_blank"
               rel="noreferrer"
             >
@@ -883,7 +988,7 @@ function App() {
             </a>
             <a
               className="text-link"
-              href={WHATSAPP}
+              href={location.whatsapp}
               target="_blank"
               rel="noreferrer"
             >
@@ -891,7 +996,7 @@ function App() {
             </a>
             <a
               className="text-link"
-              href={INSTAGRAM}
+              href={location.instagram}
               target="_blank"
               rel="noreferrer"
             >
@@ -899,11 +1004,14 @@ function App() {
             </a>
             <a
               className="text-link"
-              href={GLOVO}
+              href={location.glovo}
               target="_blank"
               rel="noreferrer"
             >
               Order on Glovo <ArrowUpRight size={16} />
+            </a>
+            <a className="text-link" href={location.phoneHref}>
+              Call {location.phone} <Phone size={15} />
             </a>
           </div>
         </Modal>
