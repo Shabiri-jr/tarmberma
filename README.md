@@ -17,7 +17,7 @@ Open http://127.0.0.1:5173. Production: `npm run build`, then `npm run preview`.
 - Real geometry includes arches, pergola, palms, planted borders, rattan chairs, tableware, pizza, cocktails, and bottle shelves. Light and sky change toward evening.
 - Click numbered chapters to travel directly. Scene hotspots open food and drinks. Look around enables orbit and zoom; Return to journey resumes the guided camera.
 - A gentle breeze sways palms and foliage with matching shadows. The renderer pauses behind dialogs and in hidden tabs, and rests when reduced motion disables the breeze. Static environment geometry remains batched by material.
-- Licensed jazz ambience starts with Play jazz, with pause, volume, and music-credit controls. The five-minute local MP3 loops and is only requested after playback is selected; playback pauses in hidden tabs. Attribution is in the About dialog and `public/audio/ATTRIBUTION.txt`.
+- Licensed jazz ambience starts with Play jazz, with pause, volume, and music-credit controls. The five-minute local MP3 loops and is only requested after playback is selected; playback pauses in hidden tabs. Attribution is in the Music credits dialog and `public/audio/ATTRIBUTION.txt`.
 - Reduced motion uses immediate chapter views. A locally rendered still replaces the scene if WebGL is unavailable. No-JavaScript visitors retain PDF and contact links.
 - 54 searchable menu selections, category filters, size variants, VAT note, and both complete source PDFs.
 - Table enquiry validates Nigeria date/time, preserves edited drafts, and prepares a WhatsApp link for review. It does not send or store messages.

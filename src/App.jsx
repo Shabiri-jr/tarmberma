@@ -752,9 +752,6 @@ function App() {
           ))}
         </nav>
         <div className="journey-bottom">
-          <button className="concept-link" onClick={() => setModal("about")}>
-            An independent concept <ArrowUpRight size={11} />
-          </button>
           <div className="scroll-cue">
             {!ready ? (
               <>
@@ -771,7 +768,7 @@ function App() {
             )}
           </div>
           <div className="view-controls">
-            <SoundControl onCredits={() => setModal("about")} />
+            <SoundControl onCredits={() => setModal("music-credits")} />
             {!failed && (
               <button
                 className={exploring ? "selected" : ""}
@@ -806,29 +803,17 @@ function App() {
         <MenuModal onClose={closeModal} initialCategory={menuCategory} />
       )}
       {modal === "reservation" && <ReservationModal onClose={closeModal} />}
-      {modal === "about" && (
+      {modal === "music-credits" && (
         <Modal
-          title="About this concept"
+          title="Music credits"
           className="about-modal"
           onClose={closeModal}
         >
-          <span className="eyebrow">AN IDEA FOR TAMBERMA</span>
+          <span className="eyebrow">THE SOUNDTRACK</span>
           <h2>
-            A place you can <em>step into.</em>
+            Music <em>credits.</em>
           </h2>
-          <p>
-            This is an independent website pitch for Tamberma Restaurant & Bar,
-            Ibadan. The 3D courtyard is an artistic interpretation, not a
-            surveyed model or an exact representation of the venue.
-          </p>
-          <p>
-            Food and drinks selections come from the supplied Tamberma menus.
-            The pizza photograph comes from an older public Tamberma website.
-            The restaurant should approve imagery, prices, and business
-            information before publication.
-          </p>
           <div className="music-credit">
-            <span className="eyebrow">THE SOUNDTRACK</span>
             <p>
               <a
                 href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1700074"
@@ -848,14 +833,6 @@ function App() {
               . Played at a lower volume and repeated as background music.
             </p>
           </div>
-          <a
-            className="text-link"
-            href={INSTAGRAM}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Visit Tamberma on Instagram <ArrowUpRight size={17} />
-          </a>
         </Modal>
       )}
       {modal === "visit" && (

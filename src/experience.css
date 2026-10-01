@@ -424,14 +424,6 @@ body {
   height: 58px;
   border-top: 1px solid #eed5b31a;
 }
-.concept-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  color: #d7cdbb;
-  padding: 10px 0;
-}
 .scroll-cue {
   display: flex;
   align-items: center;
@@ -834,14 +826,6 @@ a:focus-visible {
     flex-wrap: wrap;
     gap: 0;
     align-content: center;
-  }
-  .concept-link {
-    order: 3;
-    width: 100%;
-    justify-content: center;
-    font-size: 8px;
-    min-height: 28px;
-    padding: 6px 0;
   }
   .view-controls {
     gap: 7px;

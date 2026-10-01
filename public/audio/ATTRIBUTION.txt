@@ -7,5 +7,5 @@ Licence: Creative Commons Attribution 4.0 International
 https://creativecommons.org/licenses/by/4.0/
 
 The original MP3 is unchanged. Website playback lowers its volume and repeats the recording. No endorsement by the composer is implied.
-Attribution is also displayed in the website's About this concept dialog, accessible through Music credits in the sound controls.
+Attribution is also displayed in the website's Music credits dialog, accessible through the sound controls.
 Retrieved 30 September 2026.
