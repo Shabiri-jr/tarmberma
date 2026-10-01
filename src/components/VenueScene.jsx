@@ -33,6 +33,7 @@ const MOON = new THREE.Color("#b6c6e1");
 
 function CameraJourney({
   progress,
+  directScroll,
   reduced,
   exploring,
   nightRef,
@@ -45,6 +46,7 @@ function CameraJourney({
   const sun = useRef();
   const fill = useRef();
   const last = useRef(-1);
+  const smooth = useRef(progress.current);
   const aim = useRef(new THREE.Vector3(...STOPS[0].look));
   const projected = useMemo(() => new THREE.Vector3(), []);
   const data = useMemo(
@@ -75,20 +77,31 @@ function CameraJourney({
   }, [exploring, invalidate]);
 
   useEffect(() => {
-    // R3F already schedules the next frame; another RAF adds input latency.
-    const redraw = () => invalidate();
+    let frame;
+    const redraw = () => {
+      cancelAnimationFrame(frame);
+      if (directScroll) invalidate();
+      else frame = requestAnimationFrame(invalidate);
+    };
     window.addEventListener("scroll", redraw, { passive: true });
     window.addEventListener("resize", redraw);
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener("scroll", redraw);
       window.removeEventListener("resize", redraw);
     };
-  }, [invalidate]);
+  }, [directScroll, invalidate]);
 
-  useFrame(() => {
+  useFrame((_, rawDelta) => {
+    const delta = Math.min(rawDelta, 0.05);
     const target = THREE.MathUtils.clamp(progress.current, 0, 1);
-    // Native touch momentum supplies the motion. Keep the scene attached to it.
-    const p = reduced ? Math.round(target * 4) / 4 : target;
+    // Preserve the desktop dolly; mobile follows native touch momentum directly.
+    smooth.current = reduced
+      ? Math.round(target * 4) / 4
+      : directScroll
+        ? target
+        : THREE.MathUtils.damp(smooth.current, target, 4.5, delta);
+    const p = smooth.current;
     const scaled = p * 4;
     const index = Math.min(3, Math.floor(scaled));
     const part = THREE.MathUtils.smoothstep(scaled - index, 0, 1);
@@ -112,8 +125,9 @@ function CameraJourney({
         data.look.y += THREE.MathUtils.lerp(from.y, to.y, part);
         data.look.x += THREE.MathUtils.lerp(from.x, to.x, part);
       }
-      camera.position.copy(data.position);
-      aim.current.copy(data.look);
+      const blend = reduced || directScroll ? 1 : 1 - Math.exp(-delta * 8);
+      camera.position.lerp(data.position, blend);
+      aim.current.lerp(data.look, blend);
       camera.lookAt(aim.current);
       camera.fov =
         THREE.MathUtils.lerp(STOPS[index].fov, STOPS[index + 1].fov, part) +
@@ -145,6 +159,15 @@ function CameraJourney({
       gl.domElement.dataset.journey = p.toFixed(3);
       last.current = Math.round(p * 1000);
     }
+    if (
+      !exploring &&
+      !reduced &&
+      !directScroll &&
+      (Math.abs(target - p) > 0.00005 ||
+        camera.position.distanceToSquared(data.position) > 0.00001 ||
+        aim.current.distanceToSquared(data.look) > 0.00001)
+    )
+      invalidate();
   });
   return (
     <>
@@ -215,6 +238,7 @@ class SceneBoundary extends Component {
 
 export default function VenueScene({
   progress,
+  directScroll,
   reduced,
   exploring,
   paused,
@@ -258,6 +282,7 @@ export default function VenueScene({
         <Suspense fallback={null}>
           <CameraJourney
             progress={progress}
+            directScroll={directScroll}
             reduced={reduced}
             exploring={exploring}
             nightRef={night}

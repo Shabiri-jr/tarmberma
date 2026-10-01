@@ -518,6 +518,8 @@ const CHAPTERS = [
   },
 ];
 
+const DIRECT_SCROLL_QUERY = "(pointer: coarse)";
+
 function App() {
   const [chapter, setChapter] = useState(0);
   const [modal, setModal] = useState(null);
@@ -526,6 +528,9 @@ function App() {
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [directScroll, setDirectScroll] = useState(
+    () => matchMedia(DIRECT_SCROLL_QUERY).matches,
+  );
   const [reduced, setReduced] = useState(
     () => matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
@@ -547,43 +552,55 @@ function App() {
   };
   const travel = (index) => {
     setExploring(false);
-    const direct =
-      reduced || matchMedia("(pointer: coarse), (max-width: 759px)").matches;
     window.scrollTo({
       top: (index / 4) * (journey.current.offsetHeight - window.innerHeight),
-      behavior: direct ? "instant" : "smooth",
+      behavior: reduced || directScroll ? "instant" : "smooth",
     });
   };
 
   useEffect(() => {
+    let frame;
     let scrollRange = 1;
+    const scrollInput = matchMedia(DIRECT_SCROLL_QUERY);
     const update = () => {
-      // Update the ref in the scroll event so the next WebGL frame sees it.
       progress.current = Math.min(1, Math.max(0, window.scrollY / scrollRange));
       setChapter(Math.round(progress.current * 4));
       if (progressBar.current)
         progressBar.current.style.transform = `scaleX(${progress.current})`;
+    };
+    const scroll = () => {
+      cancelAnimationFrame(frame);
+      // Touch follows native scrolling immediately; desktop keeps its cadence.
+      if (scrollInput.matches) update();
+      else frame = requestAnimationFrame(update);
     };
     const resize = () => {
       scrollRange = Math.max(
         1,
         journey.current.offsetHeight - window.innerHeight,
       );
-      update();
+      scroll();
+    };
+    const inputChange = (event) => {
+      setDirectScroll(event.matches);
+      resize();
     };
     const visibility = () => setHidden(document.hidden);
     const preference = matchMedia("(prefers-reduced-motion: reduce)");
     const motion = (event) => setReduced(event.matches);
-    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("scroll", scroll, { passive: true });
     window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", visibility);
     preference.addEventListener("change", motion);
+    scrollInput.addEventListener("change", inputChange);
     resize();
     return () => {
-      window.removeEventListener("scroll", update);
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scroll);
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", visibility);
       preference.removeEventListener("change", motion);
+      scrollInput.removeEventListener("change", inputChange);
     };
   }, []);
 
@@ -608,6 +625,7 @@ function App() {
           <Suspense fallback={null}>
             <VenueScene
               progress={progress}
+              directScroll={directScroll}
               reduced={reduced}
               exploring={exploring}
               paused={!!modal || hidden}

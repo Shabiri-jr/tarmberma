@@ -1,6 +1,10 @@
 html {
-  scroll-behavior: auto;
   scroll-padding-top: 0;
+}
+@media (pointer: coarse) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 body {
   background: #343a2e;
@@ -757,7 +761,7 @@ a:focus-visible {
     left: 7%;
     width: 86%;
     transform: none;
-    animation: peek-enter 0.18s ease-out both;
+    animation: peek-enter 0.6s both;
   }
   .chapter-eyebrow {
     font-size: 8px;
@@ -930,6 +934,11 @@ a:focus-visible {
   .chapter-copy > p {
     line-height: 1.55;
     margin-bottom: 14px;
+  }
+}
+@media (pointer: coarse) and (max-width: 680px) {
+  .chapter-copy {
+    animation: peek-enter 0.18s ease-out both;
   }
 }
 @media (prefers-reduced-motion: reduce) {
